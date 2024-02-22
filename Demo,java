@@ -1,0 +1,83 @@
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+public class Demo {
+    public static void main(String[] args) {
+        ArrayList<Policy> policies = readPoliciesFromFile("PolicyInformation.txt");
+
+        // policies
+        for (Policy policy : policies) {
+            displayPolicyInformation(policy);
+        }
+        // number of smokers and non-smokers
+        displaySmokerStats(policies);
+    }
+
+    private static ArrayList<Policy> readPoliciesFromFile(String fileName) {
+        ArrayList<Policy> policies = new ArrayList<>();
+
+        try {
+            Scanner scanner = new Scanner(new File(fileName));
+
+            while (scanner.hasNext()) {
+                String policyNumber = scanner.nextLine();
+                String providerName = scanner.nextLine();
+                String firstName = scanner.nextLine();
+                String lastName = scanner.nextLine();
+                int age = scanner.nextInt();
+                scanner.nextLine();
+                String smokingStatus = scanner.nextLine();
+                double height = scanner.nextDouble();
+                scanner.nextLine();
+                double weight = scanner.nextDouble();
+                scanner.nextLine();
+                if (scanner.hasNext()) scanner.nextLine();
+
+                // policy object
+                Policy policy = new Policy(policyNumber, providerName, firstName, lastName, age, smokingStatus, height, weight);
+                policies.add(policy);
+            }
+
+            scanner.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found: " + e.getMessage());
+        }
+
+        return policies;
+    }
+
+    private static void displayPolicyInformation(Policy policy) {
+        // display info
+        System.out.println("Policy Number: " + policy.getPolicyNumber());
+        System.out.println("Provider Name: " + policy.getProviderName());
+        System.out.println("Policyholder's First Name: " + policy.getFirstName());
+        System.out.println("Policyholder's Last Name: " + policy.getLastName());
+        System.out.println("Policyholder's Age: " + policy.getAge());
+        System.out.println("Policyholder's Smoking Status: " + policy.getSmokingStatus());
+        System.out.println("Policyholder's Height: " + policy.getHeight() + " inches");
+        System.out.println("Policyholder's Weight: " + policy.getWeight() + " pounds");
+        System.out.printf("Policyholder's BMI: %.2f\n", policy.calculateBMI());
+        System.out.printf("Policy Price: $%.2f\n", policy.calculatePolicyPrice());
+        System.out.println();
+    }
+
+    private static void displaySmokerStats(ArrayList<Policy> policies) {
+        int smokerCount = 0;
+        int nonSmokerCount = 0;
+
+        // count smokers and non-smokers
+        for (Policy policy : policies) {
+            if (policy.getSmokingStatus().equalsIgnoreCase("smoker")) {
+                smokerCount++;
+            } else {
+                nonSmokerCount++;
+            }
+        }
+
+        // display smoker stats
+        System.out.println("\nThe number of policies with a smoker is: " + smokerCount);
+        System.out.println("The number of policies with a non-smoker is: " + nonSmokerCount);
+    }
+}
